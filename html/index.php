@@ -12,7 +12,7 @@ $user = $_SESSION['username'];
 
 
 try{
-    $conn = new mysqli("db", "root", "supersecure", "customers");
+    $conn = new mysqli("db", "root", "Trimmer-Onslaught-Spherical-Overjoyed-Poise-Overrate-Botanical-Humorous-Crewless5-Fetch", "customers");
   }catch(mysqli_sql_exception $e){
     echo("Database error.");
     exit();
@@ -22,8 +22,12 @@ if($conn -> connect_errno){
     echo "Error connecting to database";
     exit();
 }
-  
-$result = $conn->execute_query('SELECT * FROM users WHERE username = ?', [$user]);
+
+// prepared statements for SQL injections -> more on that: https://www.w3schools.com/php/php_mysql_prepared_statements.asp
+$statement = $conn->prepare('SELECT * FROM users WHERE username = ?');
+$statement->bind_param('s', $user);
+$statement->execute();
+$result = $statement->get_result();
 
 $row = $result->fetch_assoc();
 
