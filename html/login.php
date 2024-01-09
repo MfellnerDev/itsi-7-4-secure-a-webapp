@@ -1,57 +1,53 @@
 <?php
+session_start();
 
-  session_start();
-
-  /*
-  if(!(isset($_POST['user']) && isset($_POST['passw']))){
-    echo("Credential error.");
-    exit(); 
-  }
-  */
-
- if(empty($_POST['user']) || empty($_POST['passw'])){
-   header("Location: login.html");
-   echo("Error invalid credentials.");
-   exit();
-  }
-
-  $user = $_POST['user'];
-  $passw = $_POST['passw'];
-
-  try{
-    $conn = new mysqli("db", "root", "supersecure", "customers");
-  }catch(mysqli_sql_exception $e){
-    echo("Database error.");
+if (empty($_POST['user']) || empty($_POST['password'])) {
+    header("Location: login.html");
     exit();
-  }
+}
 
-  if($conn -> connect_errno){
-    echo "Error connecting to database";
+$user = $_POST['user'];
+$password = $_POST['password'];
+
+try {
+    $conn = new mysqli("db", "root", "Trimmer-Onslaught-Spherical-Overjoyed-Poise-Overrate-Botanical-Humorous-Crewless5-Fetch", "customers");
+} catch (mysqli_sql_exception $e) {
+    error_log("Database error: " . $e->getMessage());
+    header("Location: error.html");
     exit();
-  }
+}
 
-  $result = $conn->execute_query('SELECT * FROM users WHERE username = ?', [$user]);
- 
-
-  if ($result->num_rows === 0) {
-    echo "User/Password not found.<br>";
-    echo '<a href="index.php"><button>Back</button></a>';
+if ($conn->connect_errno) {
+    error_log("Error connecting to database: " . $conn->connect_error);
+    header("Location: error.html");
     exit();
-  }
+}
 
+// prepared statements for SQL injections -> more on that: https://www.w3schools.com/php/php_mysql_prepared_statements.asp
+$statement = $conn->prepare('SELECT * FROM users WHERE username = ?');
+// "declare" the user var as a string, escapes it automatically
+$statement->bind_param('s', $user);
+$statement->execute();
+$result = $statement->get_result();
 
-  $row = $result->fetch_assoc();
-  $pw =  $row['password'];
-  if ($pw !== $passw) {
-    echo "User/Password not found.";
-        echo '<a href="index.php"><button>Back</button></a>';
+if ($result->num_rows === 0) {
+    header("Location: login.html");
+    sleep(1);
     exit();
-  }
+}
 
-  $_SESSION['logged_in'] = true;
-  $_SESSION['username'] = $user;
+$row = $result->fetch_assoc();
+$storedPassword = $row['password'];
 
-  header('Location: /');
+// secure comparison with password_verify
+if (!password_verify($password, $storedPassword)) {
+    header("Location: login.html");
+    sleep(1);
+    exit();
+}
 
+$_SESSION['logged_in'] = true;
+$_SESSION['username'] = $user;
+
+header('Location: /');
 ?>
-
