@@ -104,25 +104,32 @@ Aufgabenstellung:
 ### 3.1 HTTPOnly cookie setzen
 
 Um zu verhindern, dass unser `PHPSESSID` von JavaScript code ausgelesen wird, könnten wir den `HttpOnly` Cokie auf `true` setzen.
-Dies machen wir durch den folgenden Code in `index.php:
+ Dies können wir mit einem zentralen Konfigurationsfile, mit `php.ini` für die gesamte Applikation konfigurieren.
+Wir erstellen also ein `html/php.ini` file und fügen folgendes hinzu:
 
-```php
-session_start();  
-// set the PHPSESSID cookie to "httpOnly"  
-$currentCookieParams = session_get_cookie_params();  
-$sidvalue = session_id();  
-setcookie(  
-    'PHPSESSID',  
-    $sidvalue,  
-    0,  
-    $currentCookieParams['path'],  
-    $currentCookieParams['domain'],  
-    false, // secure cookie flag  
-    true // httpOnly cookie flag  
-);
+```text
+[Session]  
+session.cookie_httponly = 1
 ```
 
 Nun wird direkt wenn der Benutzer die Website besucht der `PHPSESSID` Cokie auf `true` gesetzt.
 
 ![](https://uploads.mfellner.com/PDiWvDgcBwt3.png)
+
+### 3.2 SameSite cookie setzen
+
+Um jetzt zu verhindern, dass unser Session Cookie von dem Browser mitgesendet wird, müssen wir den `SameSite` cookie auf `strict` setzen.
+Dies erfordert nur einen weiteren Eintrag im `php.ini` file:
+
+```text
+[Session]  
+session.cookie_httponly = 1  
+session.cookie_samesite = "Strict"
+```
+
+Wenn wir nun die App neustarten und die website besuchen, fällt uns das folgende auf:
+
+![](https://uploads.mfellner.com/QBY1xT7CAaqU.png)
+
+Der Cookie ist jetzt gesetzt!
 
