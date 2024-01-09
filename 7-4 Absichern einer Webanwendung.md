@@ -133,3 +133,32 @@ Wenn wir nun die App neustarten und die website besuchen, fällt uns das folgend
 
 Der Cookie ist jetzt gesetzt!
 
+## XSS
+
+Aufgabenstellung:
+>Behebe die XSS-Luecke im Code **nicht** direkt, sondern stelle mit einer entsprechenden Content Security Policy sicher, dass durch XSS-Luecken generell kein Schadcode ausgefuehrt werden kann [2]. Achte darauf, dass bestehende JavaScript-Inhalte weiter funktionieren.
+
+Wir müssen hier also die CSP (Content Security Policy) verändern, um aufrufen von externen JavaScript oder CSS Dokumenten zu blockieren.
+
+Was wir hierbei jedoch beachten müssen, ist, dass wir selbst für unsere Applikation folgende externe Inhalte laden:
+
+```html
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">  
+  
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+```
+
+Das heißt, dass wir in unserer CSP zwar das externe laden von sonstigen Dokumenten verbieten, jedoch gewisse hosts (wie hier eben `"cdn.jsdelivr.net` und `cdnjs.cloudflare.com`) erlauben müssen.
+
+Dadurch kommen wir auf folgenden CSP-String:
+
+```
+"Content-Security-Policy: default-src 'none'; script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' cdn.jsdelivr.net 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'self'; form-action 'self';"
+```
+- **default-src**: Standardmäßig werden alle Ressourcenquellen blockiert, es sei denn, sie werden explizit in anderen Direktiven erlaubt.
+- **script-src**: Erlaubt das Ausführen von internen JavaScript code + noch die zwei Content Delivery Hosts, welche wir für unsere Website verwenden (`cdnjs.cloudflare.com`& `cdn.jsdelivr.net`)
+- **style-src**: Erlaubt das interpretieren von internen Style dokumenten + noch den einen host, über welchen wir ein Style Dokument laden (`cdn.jsdelivr.net`)
+- 
+

@@ -1,6 +1,8 @@
 <?php
 
 session_start();
+header("Content-Security-Policy: default-src 'none'; script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' cdn.jsdelivr.net 'unsafe-inline'; img-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
+
 if (!((isset($_SESSION['logged_in'])) && $_SESSION['logged_in'])) {
     header('Location: /login.html');
     die();
