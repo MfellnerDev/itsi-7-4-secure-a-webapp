@@ -4,14 +4,14 @@ services:
     networks:
       - default
     environment:
-      MYSQL_ROOT_PASSWORD: CQdqhhD3Q2ED%5du8kq*vmYdP
+      MYSQL_ROOT_PASSWORD: placeholder
       MYSQL_DATABASE: customers
     volumes:
       - ./sql-scripts:/docker-entrypoint-initdb.d
   website:
     build:
       context: .
-      dockerfile: Dockerfile  # Use the Dockerfile you created
+      dockerfile: Dockerfile
     networks:
       - default
     ports:
