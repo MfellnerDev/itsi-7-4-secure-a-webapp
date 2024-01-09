@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mariadb 
+    networks:
+      - default
+    environment:
+      MYSQL_ROOT_PASSWORD: CQdqhhD3Q2ED%5du8kq*vmYdP
+      MYSQL_DATABASE: customers
+    volumes:
+      - ./sql-scripts:/docker-entrypoint-initdb.d
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use the Dockerfile you created
+    networks:
+      - default
+    ports:
+      - 8042:80
+    volumes:
+      - ./html:/var/www/html
+
+networks:
+  default: {}
