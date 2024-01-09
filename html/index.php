@@ -1,19 +1,6 @@
 <?php
 
 session_start();
-// set the PHPSESSID cookie to "httpOnly"
-$currentCookieParams = session_get_cookie_params();
-$sidvalue = session_id();
-setcookie(
-    'PHPSESSID',
-    $sidvalue,
-    0,
-    $currentCookieParams['path'],
-    $currentCookieParams['domain'],
-    false, // secure cookie flag
-    true // httpOnly cookie flag
-);
-
 if (!((isset($_SESSION['logged_in'])) && $_SESSION['logged_in'])) {
     header('Location: /login.html');
     die();
