@@ -1,11 +1,9 @@
 <?php
+session_start();
+$_SESSION['logged_in'] = false;
+$_SESSSION['username'] = '';
 
-  session_start();
-
-  $_SESSION['logged_in'] = false;
-  $_SESSSION['username'] = '';
-
-  header('Location: /');
+header('Location: /');
 
 ?>
 

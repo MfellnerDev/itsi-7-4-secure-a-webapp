@@ -30,6 +30,7 @@ $statement->bind_param('s', $user);
 $statement->execute();
 $result = $statement->get_result();
 
+// if the username is incorrect
 if ($result->num_rows === 0) {
     header("Location: login.html");
     sleep(1);
@@ -39,7 +40,7 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 $storedPassword = $row['password'];
 
-// secure comparison with password_verify
+// if the username is correct -> secure password comparison
 if (!password_verify($password, $storedPassword)) {
     header("Location: login.html");
     sleep(1);

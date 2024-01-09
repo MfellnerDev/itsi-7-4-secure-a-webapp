@@ -1,24 +1,35 @@
 <?php
 
 session_start();
-
+// set the PHPSESSID cookie to "httpOnly"
+$currentCookieParams = session_get_cookie_params();
+$sidvalue = session_id();
+setcookie(
+    'PHPSESSID',
+    $sidvalue,
+    0,
+    $currentCookieParams['path'],
+    $currentCookieParams['domain'],
+    false, // secure cookie flag
+    true // httpOnly cookie flag
+);
 
 if (!((isset($_SESSION['logged_in'])) && $_SESSION['logged_in'])) {
-	header('Location: /login.html');
-	die();
+    header('Location: /login.html');
+    die();
 }
 
 $user = $_SESSION['username'];
 
 
-try{
+try {
     $conn = new mysqli("db", "root", "Trimmer-Onslaught-Spherical-Overjoyed-Poise-Overrate-Botanical-Humorous-Crewless5-Fetch", "customers");
-  }catch(mysqli_sql_exception $e){
+} catch (mysqli_sql_exception $e) {
     echo("Database error.");
     exit();
 }
 
-if($conn -> connect_errno){
+if ($conn->connect_errno) {
     echo "Error connecting to database";
     exit();
 }
@@ -36,39 +47,41 @@ $row = $result->fetch_assoc();
 
 
 <html>
-  <head>
+<head>
     <title>Login</title>
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-  </head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+</head>
 
-  <body>
-	<div id="bg" style="position:absolute;width:100%;height:100%;z-index:-1000;top:0px;left:0px"></div>
+<body>
+<div id="bg" style="position:absolute;width:100%;height:100%;z-index:-1000;top:0px;left:0px"></div>
 
-	<h1> My First Website </h1>
-	<h2>My Page</h2>
+<h1> My First Website </h1>
+<h2>My Page</h2>
 
 Your favorite color is: <?php echo $row['color']; ?>
 
-<br><a href="logout.php"><button>Log out</button></a>
+<br><a href="logout.php">
+    <button>Log out</button>
+</a>
 
 
 <script>
-VANTA.NET({
-  el: "#bg",
-  mouseControls: false,
-  touchControls: false,
-  gyroControls: false,
-  minHeight: 200.00,
-  minWidth: 200.00,
-  scale: 1.00,
-  scaleMobile: 1.00
-})
+    VANTA.NET({
+        el: "#bg",
+        mouseControls: false,
+        touchControls: false,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00
+    })
 </script>
 
-  
-  </body>
+
+</body>
 
 </html>

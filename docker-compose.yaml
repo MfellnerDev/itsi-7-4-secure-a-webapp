@@ -1,6 +1,6 @@
 services:
   db:
-    image: mariadb 
+    image: mariadb
     networks:
       - default
     environment:
@@ -20,4 +20,4 @@ services:
       - ./html:/var/www/html
 
 networks:
-  default: {}
+  default: { }
