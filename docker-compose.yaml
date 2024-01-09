@@ -4,7 +4,7 @@ services:
     networks:
       - default
     environment:
-      MYSQL_ROOT_PASSWORD: placeholder
+      MYSQL_ROOT_PASSWORD: Trimmer-Onslaught-Spherical-Overjoyed-Poise-Overrate-Botanical-Humorous-Crewless5-Fetch
       MYSQL_DATABASE: customers
     volumes:
       - ./sql-scripts:/docker-entrypoint-initdb.d
