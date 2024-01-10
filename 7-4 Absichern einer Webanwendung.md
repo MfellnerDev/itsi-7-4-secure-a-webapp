@@ -133,7 +133,7 @@ Wenn wir nun die App neustarten und die website besuchen, fällt uns das folgend
 
 Der Cookie ist jetzt gesetzt!
 
-## XSS
+## 4. XSS
 
 Aufgabenstellung:
 >Behebe die XSS-Luecke im Code **nicht** direkt, sondern stelle mit einer entsprechenden Content Security Policy sicher, dass durch XSS-Luecken generell kein Schadcode ausgefuehrt werden kann [2]. Achte darauf, dass bestehende JavaScript-Inhalte weiter funktionieren.
@@ -155,10 +155,56 @@ Das heißt, dass wir in unserer CSP zwar das externe laden von sonstigen Dokumen
 Dadurch kommen wir auf folgenden CSP-String:
 
 ```
-"Content-Security-Policy: default-src 'none'; script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' cdn.jsdelivr.net 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'self'; form-action 'self';"
+Content-Security-Policy: default-src 'none'; script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' cdn.jsdelivr.net 'unsafe-inline'; img-src 'self'; frame-src 'none'; form-action 'self'
 ```
 - **default-src**: Standardmäßig werden alle Ressourcenquellen blockiert, es sei denn, sie werden explizit in anderen Direktiven erlaubt.
 - **script-src**: Erlaubt das Ausführen von internen JavaScript code + noch die zwei Content Delivery Hosts, welche wir für unsere Website verwenden (`cdnjs.cloudflare.com`& `cdn.jsdelivr.net`)
 - **style-src**: Erlaubt das interpretieren von internen Style dokumenten + noch den einen host, über welchen wir ein Style Dokument laden (`cdn.jsdelivr.net`)
-- 
+- **img-src**: Erlaubt das laden von Bilden nur von der eigenen Domain
+- **frame-src**: Verhindert das einbetten der Website in frames
+- **form-action**: HTML Forms können nur an den eigenen origin gesendet werden
 
+Wenn wir jetzt also in die Developer Konsole gehen und z.B. versuchen, ein externes Script zu laden (in unserem Fall verwenden wir einfach mal JQuery
+`https://code.jquery.com/jquery-3.3.1.slim.min.js`):
+
+![](https://uploads.mfellner.com/DLJxu7gYKEf2.png)
+
+
+## 5. WAF
+
+Aufgabenstellung:
+>Aendere das Deployment der Anwendung so ab, dass der PHP-Code nicht direkt von aussen aufgerufen wird, sondern hinter einer Web Application Firewall (WAF), wie zum Beispiel mod_security [3]. Dies kann entweder als Apache-Modul oder als Reverse Proxy ausgefuehrt sein.
+
+Wir sollen jetzt also ein WAF (Web Application Firewall) konfigurieren, um uns vor möglichen Injection-Angriffen zu schützen.
+
+![](https://uploads.mfellner.com/FUklBpwtaOkC.png)
+
+(siehe https://www.cloudflare.com/learning/ddos/glossary/web-application-firewall-waf/)
+
+### 5.1 mod secure als PHP modul hinzufügen
+
+Hier werde ich der folgenden Anleitung folgen:
+https://medium.com/@luckbareja/configuring-modsecurity-web-application-firewall-37eb409e1235
+
+1. Wir begeben uns in den Docker container
+```shell
+$ docker exec -it vulnerable_app-website-1
+```
+
+2. Danach gehen wir in das`/etc/apache2/` directory und erstellen ein directory namens `modsecurity.d`
+3. Nun gehen wir in das `/etc/apache2/modsecurity.d` directory und clonen https://github.com/coreruleset/coreruleset
+4. Es wurde jetzt ein Ordner namens `coreruleset` erstellt, in dem wir uns jetzt begeben
+5. Now go further into rules folder and rename REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example to REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+
+6. Rename RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example to RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
+7. Wir gehne zu `/etc/apache2/apache2.conf` und fügen den folgenden Eintrag hinzu:
+```text
+<IfModule security2_module>  
+Include modsecurity.d/coreruleset/crs-setup.conf  
+Include modsecurity.d/coreruleset/rules/*.conf
+</IfModule>
+```
+
+8. Container restarten
+
+Damit sollte die WAF jetzt eigentlich funktionieren
