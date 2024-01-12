@@ -1,6 +1,6 @@
 ***
 **Autor:** Manuel Fellner
-**Version:** 09.01.2024
+**Version:** 12.01.2024
 
 ## 1. Einführung
 
