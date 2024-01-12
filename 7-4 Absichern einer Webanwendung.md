@@ -65,35 +65,41 @@ Das bedeutet, dass die Antwortzeit der Website bei den folgenden zwei Szenarien 
 2. Benutzer gibt richtigen Benutzernamen und falsches Passwort ein
 
 Dies können wir einfach lösen, indem wir die Applikation künstlich langsamer machen (also "schlafen legen").
-Die `sleep()` Methode (https://www.php.net/manual/en/function.sleep) gibt uns die Möglichkeit, den Ablauf der App um beliebig viel Sekunden zu verzögern.
+Die `usleep()` Methode (https://www.php.net/manual/en/function.usleep) gibt uns die Möglichkeit, den Ablauf der App um beliebig viel Mikrosekunden zu verzögern.
 
 Also bauen wir bei den zwei oben genannten Use-Cases eine künstliche Verzögerung ein:
 
 ```php
 // if the username is incorrect  
 if ($result->num_rows === 0) {  
+    usleep(rand(70000, 200000)); // Delay between 70ms and 200ms  
     header("Location: login.html");  
-    sleep(1);  
     exit();  
-}
-
-//...
+}  
+  
+$row = $result->fetch_assoc();  
+$storedPassword = $row['password'];  
+  
 // if the username is correct -> secure password comparison  
-if (!password_verify($password, $storedPassword)) {  
+if (!hash_equals($storedPassword, crypt($password, $storedPassword))) {  
+    usleep(rand(20000, 50000)); // Delay between 20ms and 50ms  
     header("Location: login.html");  
-    sleep(1);  
     exit();  
-}
-```
+}```
 
-Nun ist die Antwortzeit der App bei einem inkorrekten Benutzernamen die folgende:
+Nun sind die Antwortzeiten in beiden Fällen zwar nicht absolut gleich, jedoch sind die inkonsistent und zufällig. Da der Bereich der Zufalls-milisekunden im Use-Case 1 größer ist, gehen wir damit sicher, dass die Antwortzeit bei Use-Case 2 in den meisten Fällen kleiner als die des Use-Cases 1 ist.
+Damit kann also die Antwortzeit bei einem falschen Benutzernamen sogar um 10-20ms länger sein, als bei einem richtigen Benutzernamen.
 
-![](https://uploads.mfellner.com/kllVPxaAJsvD.png)
 
-Ebenso ist die Antwortzeit der App bei einem korrekten Benutzernamen die folgende:
+Falscher Benutzername:
+![](https://uploads.mfellner.com/XpYvEFFqnZzw.png)
 
-![](https://uploads.mfellner.com/IoDxWom7WGz4.png)
+Antwortzeit: 176ms
 
+Richtiger Benutzername:
+![](https://uploads.mfellner.com/OfuORd9t9Jr9.png)
+
+Antwortzeit: 134ms.
 
 ## 3. Session Handling
 

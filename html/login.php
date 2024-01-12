@@ -32,8 +32,8 @@ $result = $statement->get_result();
 
 // if the username is incorrect
 if ($result->num_rows === 0) {
+    usleep(rand(70000, 200000)); // Delay between 70ms and 200ms
     header("Location: login.html");
-    sleep(1);
     exit();
 }
 
@@ -41,9 +41,9 @@ $row = $result->fetch_assoc();
 $storedPassword = $row['password'];
 
 // if the username is correct -> secure password comparison
-if (!password_verify($password, $storedPassword)) {
+if (!hash_equals($storedPassword, crypt($password, $storedPassword))) {
+    usleep(rand(20000, 50000)); // Delay between 20ms and 50ms
     header("Location: login.html");
-    sleep(1);
     exit();
 }
 
