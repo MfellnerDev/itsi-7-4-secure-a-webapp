@@ -101,6 +101,12 @@ Richtiger Benutzername:
 
 Antwortzeit: 134ms.
 
+Man kann im obigen Code auch sehen, dass wir jetzt `hash_equals` (https://www.php.net/manual/en/function.hash-equals) verwenden.
+> hash_equals — Timing attack safe string comparison
+
+> Checks whether two strings are equal without leaking information about the contents of `known_string` via the execution time.
+
+>This function can be used to mitigate timing attacks. Performing a regular comparison with `===` will take more or less time to execute depending on whether the two values are different or not and at which position the first difference can be found, thus leaking information about the contents of the secret `known_string`.
 ## 3. Session Handling
 
 Aufgabenstellung:
