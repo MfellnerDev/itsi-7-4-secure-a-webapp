@@ -30,9 +30,9 @@ Aufgabenstellung:
 >Aendere die Anwendung so ab, dass das Passwort nicht im Klartext in der Datenbank gespeichert wird, sondern (stark) gehasht wird (zum Beispiel mittels `password_hash` [1]). Achte darauf, dass keine User Enumeration Angriffe durch Messen der Antwortzeit moeglich sind.
 
 
-### 2.1 Passwörter verschlüsseln
+### 2.1 Passwörter hashen
 
-Als erstes beschäftigen wir uns damit, dass die Passwörter in der Datenbank verschlüsselt gespeichert werden.
+Als erstes beschäftigen wir uns damit, dass die Passwörter in der Datenbank gehasht gespeichert werden.
 Dazu verwenden wir die `password_hash()` methode (https://www.php.net/manual/en/function.password-hash.php) mit dem `PASSWORD_DEFAULT` Algorithmus.
 
 Das sieht dann beim `register.php` folgendermaßen aus:
@@ -181,6 +181,7 @@ Wenn wir jetzt also in die Developer Konsole gehen und z.B. versuchen, ein exter
 
 ![](https://uploads.mfellner.com/DLJxu7gYKEf2.png)
 
+- laden von lokalen Javascript mittels nonce regulieren
 
 ## 5. WAF
 
