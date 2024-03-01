@@ -85,7 +85,8 @@ if (!hash_equals($storedPassword, crypt($password, $storedPassword))) {
     usleep(rand(20000, 50000)); // Delay between 20ms and 50ms  
     header("Location: login.html");  
     exit();  
-}```
+}
+```
 
 Nun sind die Antwortzeiten in beiden Fällen zwar nicht absolut gleich, jedoch sind die inkonsistent und zufällig. Da der Bereich der Zufalls-milisekunden im Use-Case 1 größer ist, gehen wir damit sicher, dass die Antwortzeit bei Use-Case 2 in den meisten Fällen kleiner als die des Use-Cases 1 ist.
 Damit kann also die Antwortzeit bei einem falschen Benutzernamen sogar um 10-20ms länger sein, als bei einem richtigen Benutzernamen.
